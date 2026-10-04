@@ -3,9 +3,10 @@ import { getFirestore, doc, getDoc, updateDoc, setDoc } from "firebase/firestore
 import { getAuth } from "firebase/auth";
 import { MOCK_DATA, SUPER_ADMIN_SETTINGS, type RestaurantData } from "./menu-data";
 
-// Firebase web config (public client keys). apiKey stays in an env var.
+// ─── Paste your Firebase web config below ────────────────────────────────────
+// Copy each value from: Firebase Console → Project settings → Your apps → SDK setup and configuration (Config)
 const firebaseConfig = {
-  apiKey: import.meta.env['VITE_FIREBASE_API_KEY'],
+  apiKey: "PASTE_YOUR_API_KEY_HERE",
   authDomain: "restaurant-web-3976b.firebaseapp.com",
   projectId: "restaurant-web-3976b",
   storageBucket: "restaurant-web-3976b.firebasestorage.app",
@@ -13,7 +14,9 @@ const firebaseConfig = {
   appId: "1:886671923791:web:f55e33042e443ad198e83a",
 };
 
-export const isFirebaseConfigured = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId);
+export const isFirebaseConfigured = Boolean(
+  firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("PASTE_YOUR"),
+);
 
 let app: FirebaseApp | null = null;
 function getApp() {
