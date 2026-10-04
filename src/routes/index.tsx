@@ -39,6 +39,12 @@ function MenuPage() {
         (!t || i.title.toLowerCase().includes(t) || i.description.toLowerCase().includes(t)),
     );
   }, [data, active, q]);
+  const sections = useMemo(() => {
+    const visible = active === "all" ? cats : cats.filter((c) => c.id === active);
+    return visible
+      .map((c) => ({ ...c, items: items.filter((i) => i.category_id === c.id) }))
+      .filter((s) => s.items.length > 0);
+  }, [cats, items, active]);
 
   return (
     <div className="relative min-h-screen overflow-hidden">
