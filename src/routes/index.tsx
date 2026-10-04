@@ -86,28 +86,30 @@ function MenuPage() {
           </div>
         </div>
 
-        <div key={active + q} className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((i, idx) => (
-            <article key={i.id} style={{ animationDelay: `${idx * 40}ms` }}
-              className={`rise group glass overflow-hidden rounded-2xl transition-transform duration-300 hover:-translate-y-1 ${!i.is_available ? "opacity-60" : ""}`}>
-              <div className="relative aspect-[4/3] overflow-hidden">
-                <img src={imageFor(catName(i.category_id))} alt={i.title} loading="lazy" width={944} height={704}
-                  className={`h-full w-full object-cover transition-transform duration-500 group-hover:scale-110 ${!i.is_available ? "grayscale" : ""}`} />
-                <span className={`absolute left-3 top-3 rounded-full px-3 py-1 text-xs font-bold ${
-                  i.is_available ? "bg-success text-primary-foreground" : "bg-destructive text-destructive-foreground"}`}>
-                  {i.is_available ? "In Stock" : "Sold Out"}
-                </span>
+        <div key={active + q} className="mt-6 space-y-10">
+          {sections.map((sec) => (
+            <section key={sec.id}>
+              <div className="rise relative mb-4 h-36 overflow-hidden rounded-2xl sm:h-44">
+                <img src={imageFor(sec.name)} alt={sec.name} loading="lazy" width={944} height={704}
+                  className="h-full w-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/30 to-transparent" />
+                <h2 className="absolute bottom-3 left-4 text-2xl font-extrabold sm:text-3xl">{sec.name}</h2>
               </div>
-              <div className="p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <h3 className="text-lg font-bold leading-tight">{i.title}</h3>
-                  <span className="text-fire shrink-0 text-lg font-extrabold">₹{i.price}</span>
-                </div>
-                <p className="mt-1 text-sm text-muted-foreground">{i.description}</p>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {sec.items.map((i, idx) => (
+                  <article key={i.id} style={{ animationDelay: `${idx * 40}ms` }}
+                    className="rise glass rounded-2xl p-4 transition-transform duration-300 hover:-translate-y-1">
+                    <div className="flex items-start justify-between gap-3">
+                      <h3 className="text-lg font-bold leading-tight">{i.title}</h3>
+                      <span className="text-fire shrink-0 text-lg font-extrabold">₹{i.price}</span>
+                    </div>
+                    <p className="mt-1 text-sm text-muted-foreground">{i.description}</p>
+                  </article>
+                ))}
               </div>
-            </article>
+            </section>
           ))}
-          {items.length === 0 && <p className="col-span-full py-12 text-center text-muted-foreground">No dishes found.</p>}
+          {items.length === 0 && <p className="py-12 text-center text-muted-foreground">No dishes found.</p>}
         </div>
       </main>
       <footer className="pb-8 text-center text-xs text-muted-foreground">
