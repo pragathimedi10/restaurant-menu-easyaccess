@@ -1,0 +1,59 @@
+import { initializeApp, getApps, type FirebaseApp } from "firebase/app";
+import { getFirestore, doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { MOCK_DATA, SUPER_ADMIN_SETTINGS, type RestaurantData } from "./menu-data";
+
+// Paste your Firebase web config into these env vars (public client keys).
+const firebaseConfig = {
+  apiKey: import.meta.env['VITE_FIREBASE_API_KEY'],
+  authDomain: import.meta.env['VITE_FIREBASE_AUTH_DOMAIN'],
+  projectId: import.meta.env['VITE_FIREBASE_PROJECT_ID'],
+  storageBucket: import.meta.env['VITE_FIREBASE_STORAGE_BUCKET'],
+  messagingSenderId: import.meta.env['VITE_FIREBASE_MESSAGING_SENDER_ID'],
+  appId: import.meta.env['VITE_FIREBASE_APP_ID'],
+};
+
+export const isFirebaseConfigured = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId);
+
+let app: FirebaseApp | null = null;
+function getApp() {
+  if (!isFirebaseConfigured) return null;
+  if (!app) app = getApps()[0] ?? initializeApp(firebaseConfig);
+  return app;
+}
+export function firebaseAuth() {
+  const a = getApp();
+  return a ? getAuth(a) : null;
+}
+function mainDoc() {
+  const a = getApp();
+  return a ? doc(getFirestore(a), "restaurant_data", "main") : null;
+}
+
+/** Single read: the whole menu lives in one document. */
+export async function fetchRestaurant(): Promise<RestaurantData> {
+  const ref = mainDoc();
+  if (!ref) return MOCK_DATA;
+  try {
+    const snap = await getDoc(ref);
+    if (!snap.exists()) return MOCK_DATA;
+    const d = snap.data() as Partial<RestaurantData>;
+    return {
+      settings: { ...SUPER_ADMIN_SETTINGS, ...(d.settings ?? {}) },
+      categories: d.categories ?? [],
+      menu_items: d.menu_items ?? [],
+    };
+  } catch (e) {
+    console.warn("Firestore read failed, using demo data", e);
+    return MOCK_DATA;
+  }
+}
+
+/** Admins only write categories + menu_items; settings stay super-admin controlled. */
+export async function saveMenu(data: Pick<RestaurantData, "categories" | "menu_items">) {
+  const ref = mainDoc();
+  if (!ref) throw new Error("Firebase is not configured");
+  const snap = await getDoc(ref);
+  if (snap.exists()) await updateDoc(ref, data);
+  else await setDoc(ref, { settings: SUPER_ADMIN_SETTINGS, ...data });
+}
