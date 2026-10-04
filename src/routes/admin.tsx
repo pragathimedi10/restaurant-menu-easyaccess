@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut, type User } from "firebase/auth";
+import { FirebaseError } from "firebase/app";
+import { toast } from "sonner";
 import { Trash2, Plus, Pencil, Check, X, LogOut } from "lucide-react";
 import { z } from "zod";
 import { firebaseAuth, fetchRestaurant, isFirebaseConfigured, saveMenu } from "@/lib/firebase";
@@ -23,6 +25,18 @@ export const Route = createFileRoute("/admin")({
 const input = "glass w-full rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring";
 const btn = "bg-fire inline-flex items-center justify-center gap-1 rounded-full px-4 py-2 text-sm font-bold text-primary-foreground disabled:opacity-50";
 const uid = () => Math.random().toString(36).slice(2, 10);
+
+const FIREBASE_AUTH_ERRORS: Record<string, string> = {
+  "auth/invalid-email": "That email address looks invalid.",
+  "auth/user-not-found": "No account exists for that email.",
+  "auth/wrong-password": "Incorrect password for that account.",
+  "auth/invalid-credential": "Invalid email or password.",
+  "auth/user-disabled": "This account has been disabled.",
+  "auth/too-many-requests": "Too many attempts. Try again in a few minutes.",
+  "auth/network-request-failed": "Network error — check your connection and retry.",
+  "auth/operation-not-allowed": "Email/Password sign-in is not enabled in the Firebase console.",
+  "auth/configuration-not-found": "Email/Password sign-in is not enabled in the Firebase console.",
+};
 
 function AdminPage() {
   const [user, setUser] = useState<User | null | undefined>(undefined);
@@ -65,8 +79,21 @@ function Login() {
     const p = z.object({ email: z.string().trim().email(), pw: z.string().min(6) }).safeParse({ email, pw });
     if (!p.success) return setErr("Enter a valid email and password (6+ chars).");
     setBusy(true); setErr("");
-    try { await signInWithEmailAndPassword(firebaseAuth()!, p.data.email, p.data.pw); }
-    catch { setErr("Invalid email or password."); }
+    const auth = firebaseAuth();
+    if (!auth) return setBusy(false);
+    try {
+      // Explicit Firebase Auth call using the config in src/lib/firebase.ts
+      await signInWithEmailAndPassword(auth, p.data.email, p.data.pw);
+    } catch (e) {
+      if (e instanceof FirebaseError) {
+        const msg = FIREBASE_AUTH_ERRORS[e.code] ?? e.message;
+        setErr(`Sign-in failed (${e.code}): ${msg}`);
+        toast.error(`Sign-in failed (${e.code})`, { description: msg });
+      } else {
+        setErr("Sign-in failed: unexpected error.");
+        toast.error("Sign-in failed", { description: "Unexpected error. Please try again." });
+      }
+    }
     setBusy(false);
   };
   return (
