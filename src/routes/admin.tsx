@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut, type User } from "firebase/auth";
+import { FirebaseError } from "firebase/app";
+import { toast } from "sonner";
 import { Trash2, Plus, Pencil, Check, X, LogOut } from "lucide-react";
 import { z } from "zod";
 import { firebaseAuth, fetchRestaurant, isFirebaseConfigured, saveMenu } from "@/lib/firebase";
@@ -65,8 +67,21 @@ function Login() {
     const p = z.object({ email: z.string().trim().email(), pw: z.string().min(6) }).safeParse({ email, pw });
     if (!p.success) return setErr("Enter a valid email and password (6+ chars).");
     setBusy(true); setErr("");
-    try { await signInWithEmailAndPassword(firebaseAuth()!, p.data.email, p.data.pw); }
-    catch { setErr("Invalid email or password."); }
+    const auth = firebaseAuth();
+    if (!auth) return setBusy(false);
+    try {
+      // Explicit Firebase Auth call using the config in src/lib/firebase.ts
+      await signInWithEmailAndPassword(auth, p.data.email, p.data.pw);
+    } catch (e) {
+      if (e instanceof FirebaseError) {
+        const msg = FIREBASE_AUTH_ERRORS[e.code] ?? e.message;
+        setErr(`Sign-in failed (${e.code}): ${msg}`);
+        toast.error(`Sign-in failed (${e.code})`, { description: msg });
+      } else {
+        setErr("Sign-in failed: unexpected error.");
+        toast.error("Sign-in failed", { description: "Unexpected error. Please try again." });
+      }
+    }
     setBusy(false);
   };
   return (
