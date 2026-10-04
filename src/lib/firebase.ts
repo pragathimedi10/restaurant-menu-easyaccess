@@ -3,14 +3,14 @@ import { getFirestore, doc, getDoc, updateDoc, setDoc } from "firebase/firestore
 import { getAuth } from "firebase/auth";
 import { MOCK_DATA, SUPER_ADMIN_SETTINGS, type RestaurantData } from "./menu-data";
 
-// Paste your Firebase web config into these env vars (public client keys).
+// Firebase web config (public client keys). apiKey stays in an env var.
 const firebaseConfig = {
   apiKey: import.meta.env['VITE_FIREBASE_API_KEY'],
-  authDomain: import.meta.env['VITE_FIREBASE_AUTH_DOMAIN'],
-  projectId: import.meta.env['VITE_FIREBASE_PROJECT_ID'],
-  storageBucket: import.meta.env['VITE_FIREBASE_STORAGE_BUCKET'],
-  messagingSenderId: import.meta.env['VITE_FIREBASE_MESSAGING_SENDER_ID'],
-  appId: import.meta.env['VITE_FIREBASE_APP_ID'],
+  authDomain: "restaurant-web-3976b.firebaseapp.com",
+  projectId: "restaurant-web-3976b",
+  storageBucket: "restaurant-web-3976b.firebasestorage.app",
+  messagingSenderId: "886671923791",
+  appId: "1:886671923791:web:f55e33042e443ad198e83a",
 };
 
 export const isFirebaseConfigured = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId);
