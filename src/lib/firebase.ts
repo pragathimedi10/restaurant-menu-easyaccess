@@ -6,7 +6,7 @@ import { MOCK_DATA, SUPER_ADMIN_SETTINGS, type RestaurantData } from "./menu-dat
 // ─── Paste your Firebase web config below ────────────────────────────────────
 // Copy each value from: Firebase Console → Project settings → Your apps → SDK setup and configuration (Config)
 const firebaseConfig = {
-  apiKey: "AlzaSyBtzZUhch15aMvE5Fsx0PrkKrC1ZEegzQs",
+  apiKey: "AIzaSyBtzZUhch15aMvE5Fsx0PrkKrC1ZEegzQs",
   authDomain: "restaurant-web-3976b.firebaseapp.com",
   projectId: "restaurant-web-3976b",
   storageBucket: "restaurant-web-3976b.firebasestorage.app",
