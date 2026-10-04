@@ -197,7 +197,7 @@ function ItemForm({ item, cats, onSave, onCancel }: { item: MenuItem; cats: Cate
     <form className="mt-4 grid gap-3 rounded-xl bg-secondary/60 p-4 sm:grid-cols-2" onSubmit={(e) => {
       e.preventDefault();
       const p = itemSchema.safeParse(f);
-      if (!p.success) return setErr(p.error.issues[0].message);
+      if (!p.success) return setErr(p.error.issues[0]?.message ?? "Invalid input");
       onSave({ ...f, ...p.data });
     }}>
       <input className={input} placeholder="Title" value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} />
