@@ -9,7 +9,7 @@ describe("Restaurant access", () => {
   it("rejects document path injection", () => {
     expect(() => restaurantIdOrMain("main/other")).toThrow();
   });
-    it("recognizes the configured super-admin email only when verified", () => {
+  it("recognizes the configured super-admin email only when verified", () => {
     expect(restaurantRole(SUPER_ADMIN_EMAIL, true, "super", [])).toBe("superadmin");
     expect(restaurantRole(SUPER_ADMIN_EMAIL, false, "super", [])).toBe("denied");
   });
