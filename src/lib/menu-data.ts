@@ -13,7 +13,7 @@ export type Settings = {
   address: string;
   google_maps_url: string;
 };
-export type Category = { id: string; name: string; display_order: number };
+export type Category = { id: string; name: string; display_order: number; image_url?: string };
 export type MenuItem = {
   id: string;
   category_id: string;
@@ -28,7 +28,7 @@ export type RestaurantData = {
   menu_items: MenuItem[];
 };
 
-// Super Admin (developer) controlled branding — not editable from /admin.
+// Default branding; only super admins may edit persisted settings.
 export const SUPER_ADMIN_SETTINGS: Settings = {
   name: "Ember & Fork",
   tagline: "Fire-kissed comfort food, served fast.",
