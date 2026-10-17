@@ -4,7 +4,7 @@ service cloud.firestore {
     function signedIn() { return request.auth != null; }
     function superAdmin() {
       return signedIn()
-        && request.auth.token.email == 'your-superadmin-email@gmail.com'
+        && request.auth.token.email == 'pragathimedi10@gmail.com'
         && request.auth.token.email_verified == true;
     }
     function owner(restaurantId) {

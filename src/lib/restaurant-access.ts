@@ -1,4 +1,4 @@
-export const SUPER_ADMIN_EMAIL = "your-superadmin-email@gmail.com";
+export const SUPER_ADMIN_EMAIL = "pragathimedi10@gmail.com";
 export type RestaurantRole = "superadmin" | "owner" | "denied";
 
 export function restaurantIdOrMain(id?: string): string {
