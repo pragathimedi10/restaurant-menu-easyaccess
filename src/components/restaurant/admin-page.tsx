@@ -279,7 +279,7 @@ function SettingsForm({ settings, onSave }: { settings: Settings; onSave: (s: Se
     <h2 className="text-xl font-bold">Restaurant Settings</h2>
     <form className="mt-3 grid gap-3 sm:grid-cols-2" onSubmit={async (e) => {
       e.preventDefault();
-      if (!form.name.trim() || !validImageUrl(form.hero_image_url) || !validImageUrl(form.google_maps_url)) return toast.error("Enter a restaurant title and valid HTTPS links.");
+      if (!form.name.trim() || !validImageUrl(form.hero_image_url) || !validImageUrl(form.google_maps_url)) { toast.error("Enter a restaurant title and valid HTTPS links."); return; }
       setSaving(true); try { await onSave(form); } finally { setSaving(false); }
     }}>
       {([{ key: "name", label: "Restaurant Title" }, { key: "phone", label: "Phone" }, { key: "address", label: "Address" }, { key: "google_maps_url", label: "Google Maps link" }, { key: "hero_image_url", label: "Hero Image URL" }] as const).map(({ key, label }) => <label key={key} className="space-y-1 text-sm"><span>{label}</span><input className={input} type={key.endsWith("url") ? "url" : "text"} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} required={key === "name"} /></label>)}

@@ -61,11 +61,11 @@ export async function fetchRestaurantRole(restaurantId = "main"): Promise<Restau
   const user = firebaseAuth()?.currentUser;
   if (!a || !user) return "denied";
   const token = await user.getIdTokenResult();
-  const email = typeof token.claims.email === "string" ? token.claims.email : null;
-  if (restaurantRole(email, token.claims.email_verified === true, user.uid, []) === "superadmin") return "superadmin";
+  const email = typeof token.claims['email'] === "string" ? token.claims['email'] : null;
+  if (restaurantRole(email, token.claims['email_verified'] === true, user.uid, []) === "superadmin") return "superadmin";
   const access = await getDoc(doc(getFirestore(a), "restaurant_access", restaurantIdOrMain(restaurantId)));
-  const owners = access.data()?.owner_uids;
-  return restaurantRole(email, token.claims.email_verified === true, user.uid, Array.isArray(owners) ? owners : []);
+  const owners = access.data()?.['owner_uids'];
+  return restaurantRole(email, token.claims['email_verified'] === true, user.uid, Array.isArray(owners) ? owners : []);
 }
 
 /** Never read before writes: owners patch only menu_items; rules verify every write. */
