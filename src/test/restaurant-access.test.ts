@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { permittedUpdate, restaurantIdOrMain, restaurantRole } from "@/lib/restaurant-access";
+import { SUPER_ADMIN_EMAIL, permittedUpdate, restaurantIdOrMain, restaurantRole } from "@/lib/restaurant-access";
 
 describe("Restaurant access", () => {
   it("defaults to main when no ID is provided", () => {
