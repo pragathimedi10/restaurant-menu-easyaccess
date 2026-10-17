@@ -35,16 +35,16 @@ function restaurantDoc(restaurantId = "main") {
 }
 
 /** Single read: the whole menu lives in one document. */
-export async function fetchRestaurant(restaurantId = "main"): Promise<RestaurantData> {
+export async function fetchRestaurant(restaurantId = "main", allowDemo = true): Promise<RestaurantData> {
   const id = restaurantIdOrMain(restaurantId);
   const ref = restaurantDoc(id);
   if (!ref) {
-    if (id === "main") return MOCK_DATA;
+    if (id === "main" && allowDemo) return MOCK_DATA;
     throw new Error("Restaurant is unavailable");
   }
     const snap = await getDoc(ref);
     if (!snap.exists()) {
-      if (id === "main") return MOCK_DATA;
+      if (id === "main" && allowDemo) return MOCK_DATA;
       throw new Error("Restaurant not found");
     }
     const d = snap.data() as Partial<RestaurantData>;
