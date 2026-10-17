@@ -2,6 +2,7 @@ import { initializeApp, getApps, type FirebaseApp } from "firebase/app";
 import { getFirestore, doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { MOCK_DATA, SUPER_ADMIN_SETTINGS, type RestaurantData } from "./menu-data";
+import { permittedUpdate, restaurantIdOrMain, restaurantRole, type RestaurantRole } from "./restaurant-access";
 
 // ─── Paste your Firebase web config below ────────────────────────────────────
 // Copy each value from: Firebase Console → Project settings → Your apps → SDK setup and configuration (Config)
@@ -28,35 +29,53 @@ export function firebaseAuth() {
   const a = getApp();
   return a ? getAuth(a) : null;
 }
-function mainDoc() {
+function restaurantDoc(restaurantId = "main") {
   const a = getApp();
-  return a ? doc(getFirestore(a), "restaurant_data", "main") : null;
+  return a ? doc(getFirestore(a), "restaurant_data", restaurantIdOrMain(restaurantId)) : null;
 }
 
 /** Single read: the whole menu lives in one document. */
-export async function fetchRestaurant(): Promise<RestaurantData> {
-  const ref = mainDoc();
-  if (!ref) return MOCK_DATA;
-  try {
+export async function fetchRestaurant(restaurantId = "main", allowDemo = true): Promise<RestaurantData> {
+  const id = restaurantIdOrMain(restaurantId);
+  const ref = restaurantDoc(id);
+  if (!ref) {
+    if (id === "main" && allowDemo) return MOCK_DATA;
+    throw new Error("Restaurant is unavailable");
+  }
     const snap = await getDoc(ref);
-    if (!snap.exists()) return MOCK_DATA;
+    if (!snap.exists()) {
+      if (id === "main" && allowDemo) return MOCK_DATA;
+      throw new Error("Restaurant not found");
+    }
     const d = snap.data() as Partial<RestaurantData>;
     return {
       settings: { ...SUPER_ADMIN_SETTINGS, ...(d.settings ?? {}) },
       categories: d.categories ?? [],
       menu_items: d.menu_items ?? [],
     };
-  } catch (e) {
-    console.warn("Firestore read failed, using demo data", e);
-    return MOCK_DATA;
-  }
 }
 
-/** Admins only write categories + menu_items; settings stay super-admin controlled. */
-export async function saveMenu(data: Pick<RestaurantData, "categories" | "menu_items">) {
-  const ref = mainDoc();
+/** Access is stored separately from the public menu and enforced by Firestore rules. */
+export async function fetchRestaurantRole(restaurantId = "main"): Promise<RestaurantRole> {
+  const a = getApp();
+  const user = firebaseAuth()?.currentUser;
+  if (!a || !user) return "denied";
+  const token = await user.getIdTokenResult();
+  const email = typeof token.claims['email'] === "string" ? token.claims['email'] : null;
+  if (restaurantRole(email, token.claims['email_verified'] === true, user.uid, []) === "superadmin") return "superadmin";
+  const access = await getDoc(doc(getFirestore(a), "restaurant_access", restaurantIdOrMain(restaurantId)));
+  const owners = access.data()?.['owner_uids'];
+  return restaurantRole(email, token.claims['email_verified'] === true, user.uid, Array.isArray(owners) ? owners : []);
+}
+
+/** Never read before writes: owners patch only menu_items; rules verify every write. */
+export async function saveRestaurant(restaurantId: string, data: Partial<RestaurantData>, role: RestaurantRole, exists = true) {
+  const ref = restaurantDoc(restaurantId);
   if (!ref) throw new Error("Firebase is not configured");
-  const snap = await getDoc(ref);
-  if (snap.exists()) await updateDoc(ref, data);
-  else await setDoc(ref, { settings: SUPER_ADMIN_SETTINGS, ...data });
+  if (!permittedUpdate(role, Object.keys(data))) throw new Error("You do not have permission to make this change");
+  if (exists) await updateDoc(ref, data);
+  else {
+    if (role !== "superadmin") throw new Error("Only super admins can create restaurants");
+    await setDoc(ref, { settings: SUPER_ADMIN_SETTINGS, categories: [], menu_items: [], ...data });
+  }
 }

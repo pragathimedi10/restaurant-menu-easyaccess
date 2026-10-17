@@ -1,0 +1,38 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function superAdmin() {
+      return signedIn()
+        && request.auth.token.email == 'your-superadmin-email@gmail.com'
+        && request.auth.token.email_verified == true;
+    }
+    function owner(restaurantId) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/restaurant_access/$(restaurantId))
+        && request.auth.uid in get(/databases/$(database)/documents/restaurant_access/$(restaurantId)).data.owner_uids;
+    }
+    function validMenu(data) {
+      return data.settings is map && data.categories is list && data.menu_items is list;
+    }
+    match /restaurant_data/{restaurantId} {
+      allow get: if true;
+      allow list: if false;
+      allow create: if superAdmin() && validMenu(request.resource.data)
+        && request.resource.data.keys().hasOnly(['settings', 'categories', 'menu_items']);
+      allow update: if validMenu(request.resource.data) && (
+        (superAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['settings', 'categories', 'menu_items']))
+        || (owner(restaurantId) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['menu_items']))
+      );
+      allow delete: if false;
+    }
+    match /restaurant_access/{restaurantId} {
+      allow get: if superAdmin() || owner(restaurantId);
+      allow list: if false;
+      allow create, update: if superAdmin()
+        && request.resource.data.keys().hasOnly(['owner_uids'])
+        && request.resource.data.owner_uids is list;
+      allow delete: if superAdmin();
+    }
+  }
+}

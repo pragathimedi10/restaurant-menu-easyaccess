@@ -14,4 +14,10 @@ describe("App routing", () => {
 
     expect(matches.at(-1)?.routeId).not.toBe(rootRouteId);
   });
+  it("matches tenant menus and un-nested tenant admin pages", () => {
+    const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
+    expect(router.matchRoutes("/cafe-two").at(-1)?.routeId).toBe("/$restaurantId");
+    expect(router.matchRoutes("/cafe-two/admin").at(-1)?.routeId).toBe("/$restaurantId_/admin");
+    expect(router.matchRoutes("/admin").at(-1)?.routeId).toBe("/admin");
+  });
 });
