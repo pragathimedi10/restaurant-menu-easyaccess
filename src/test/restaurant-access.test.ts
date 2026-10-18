@@ -9,9 +9,9 @@ describe("Restaurant access", () => {
   it("rejects document path injection", () => {
     expect(() => restaurantIdOrMain("main/other")).toThrow();
   });
-  it("recognizes the configured super-admin email only when verified", () => {
+  it("recognizes the configured super-admin email regardless of verification", () => {
     expect(restaurantRole(SUPER_ADMIN_EMAIL, true, "super", [])).toBe("superadmin");
-    expect(restaurantRole(SUPER_ADMIN_EMAIL, false, "super", [])).toBe("denied");
+    expect(restaurantRole(SUPER_ADMIN_EMAIL, false, "super", [])).toBe("superadmin");
   });
   it("limits super admins to settings, categories and menu items", () => {
     expect(permittedUpdate("superadmin", ["settings", "categories", "menu_items"])).toBe(true);

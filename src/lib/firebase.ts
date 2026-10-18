@@ -2,7 +2,7 @@ import { initializeApp, getApps, type FirebaseApp } from "firebase/app";
 import { getFirestore, doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { MOCK_DATA, SUPER_ADMIN_SETTINGS, type RestaurantData } from "./menu-data";
-import { SUPER_ADMIN_EMAIL, permittedUpdate, restaurantIdOrMain, restaurantRole, type RestaurantRole } from "./restaurant-access";
+import { permittedUpdate, restaurantIdOrMain, restaurantRole, type RestaurantRole } from "./restaurant-access";
 
 // ─── Paste your Firebase web config below ────────────────────────────────────
 // Copy each value from: Firebase Console → Project settings → Your apps → SDK setup and configuration (Config)

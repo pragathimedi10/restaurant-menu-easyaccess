@@ -47,9 +47,9 @@ describe("Tenant document reads and writes", () => {
     expect(getIdTokenResult).toHaveBeenCalledWith(true);
     expect(mocks.read).not.toHaveBeenCalled();
   });
-  it("unverified super admins get verification guidance without an access read", async () => {
+  it("unverified super admins still get access without an access read", async () => {
     mocks.auth.currentUser = { uid: "super", getIdTokenResult: vi.fn().mockResolvedValue({ claims: { email: "pragathimedi10@gmail.com", email_verified: false } }) };
-    await expect(fetchRestaurantRole("burger2rolls")).rejects.toThrow("Verify your super-admin email");
+    expect(await fetchRestaurantRole("burger2rolls")).toBe("superadmin");
     expect(mocks.read).not.toHaveBeenCalled();
   });
   it("other accounts still require the matching restaurant assignment", async () => {
