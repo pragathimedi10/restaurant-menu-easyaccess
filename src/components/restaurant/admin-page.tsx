@@ -40,7 +40,7 @@ export function AdminPage({ restaurantId = "main" }: { restaurantId?: string }) 
   const [accessError, setAccessError] = useState("");
   useEffect(() => {
     let alive = true; setRole(null); setAccessError("");
-    if (user) fetchRestaurantRole(restaurantId).then((value) => { if (alive) setRole(value); }).catch(() => { if (alive) setAccessError("Unable to verify restaurant access. Check the restaurant access permissions."); });
+    if (user) fetchRestaurantRole(restaurantId).then((value) => { if (alive) setRole(value); }).catch((error: unknown) => { if (alive) setAccessError(error instanceof Error ? error.message : "Unable to verify restaurant access. Check the restaurant access permissions."); });
     return () => { alive = false; };
   }, [user, restaurantId]);
 
