@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Trash2, Plus, Pencil, Check, X, LogOut } from "lucide-react";
 import { z } from "zod";
 import { firebaseAuth, fetchRestaurant, isFirebaseConfigured, fetchRestaurantRole, saveRestaurant } from "@/lib/firebase";
+import { ensureBurger2Rolls } from "@/lib/seed-burger2rolls";
 import { SUPER_ADMIN_SETTINGS, type Settings, type Category, type MenuItem } from "@/lib/menu-data";
 
 import { Button } from "@/components/ui/button";
@@ -161,6 +162,7 @@ function Dashboard({ user, restaurantId, role }: { user: User; restaurantId: str
         </div>
       </div>
 
+      {superAdmin && <SeedButton />}
       {superAdmin && <SettingsForm settings={settings} onSave={async (next) => { if (await save({ settings: next })) setSettings(next); }} />}
       <fieldset disabled={busy} className="min-w-0">
       {superAdmin && <section className="mt-6 border-t border-border pt-5">
