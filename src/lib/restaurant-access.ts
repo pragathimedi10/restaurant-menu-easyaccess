@@ -7,8 +7,8 @@ export function restaurantIdOrMain(id?: string): string {
   return value;
 }
 
-export function restaurantRole(email: string | null, verified: boolean, uid: string, owners: string[]): RestaurantRole {
-  if (email === SUPER_ADMIN_EMAIL && verified) return "superadmin";
+export function restaurantRole(email: string | null, _verified: boolean, uid: string, owners: string[]): RestaurantRole {
+  if (email === SUPER_ADMIN_EMAIL) return "superadmin";
   return owners.includes(uid) ? "owner" : "denied";
 }
 
