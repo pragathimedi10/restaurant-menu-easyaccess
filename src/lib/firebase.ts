@@ -2,7 +2,7 @@ import { initializeApp, getApps, type FirebaseApp } from "firebase/app";
 import { getFirestore, doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { MOCK_DATA, SUPER_ADMIN_SETTINGS, type RestaurantData } from "./menu-data";
-import { permittedUpdate, restaurantIdOrMain, restaurantRole, type RestaurantRole } from "./restaurant-access";
+import { SUPER_ADMIN_EMAIL, permittedUpdate, restaurantIdOrMain, restaurantRole, type RestaurantRole } from "./restaurant-access";
 
 // ─── Paste your Firebase web config below ────────────────────────────────────
 // Copy each value from: Firebase Console → Project settings → Your apps → SDK setup and configuration (Config)
@@ -60,9 +60,13 @@ export async function fetchRestaurantRole(restaurantId = "main"): Promise<Restau
   const a = getApp();
   const user = firebaseAuth()?.currentUser;
   if (!a || !user) return "denied";
-  const token = await user.getIdTokenResult();
+  // Refresh claims so a newly verified super admin does not use an old token.
+  const token = await user.getIdTokenResult(true);
   const email = typeof token.claims['email'] === "string" ? token.claims['email'] : null;
   if (restaurantRole(email, token.claims['email_verified'] === true, user.uid, []) === "superadmin") return "superadmin";
+  if (email === SUPER_ADMIN_EMAIL) {
+    throw new Error("Verify your super-admin email in Firebase Authentication, then sign out and sign in again. Super admins do not need a restaurant access assignment.");
+  }
   const access = await getDoc(doc(getFirestore(a), "restaurant_access", restaurantIdOrMain(restaurantId)));
   const owners = access.data()?.['owner_uids'];
   return restaurantRole(email, token.claims['email_verified'] === true, user.uid, Array.isArray(owners) ? owners : []);

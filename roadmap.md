@@ -1,4 +1,5 @@
 # Restaurant routing and access
+- [x] Refresh super-admin token claims, bypass tenant access reads for verified super admins, and report email-verification requirements explicitly.
 - [x] Add tenant-specific menu and admin pages.
 - [x] Add role-restricted settings, category images, and item editing.
 - [x] Add Firestore access rules and deployment instructions.
