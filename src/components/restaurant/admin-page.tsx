@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Trash2, Plus, Pencil, Check, X, LogOut } from "lucide-react";
 import { z } from "zod";
 import { firebaseAuth, fetchRestaurant, isFirebaseConfigured, fetchRestaurantRole, saveRestaurant } from "@/lib/firebase";
+import { ensureBurger2Rolls } from "@/lib/seed-burger2rolls";
 import { SUPER_ADMIN_SETTINGS, type Settings, type Category, type MenuItem } from "@/lib/menu-data";
 
 import { Button } from "@/components/ui/button";
@@ -161,6 +162,7 @@ function Dashboard({ user, restaurantId, role }: { user: User; restaurantId: str
         </div>
       </div>
 
+      {superAdmin && <SeedButton />}
       {superAdmin && <SettingsForm settings={settings} onSave={async (next) => { if (await save({ settings: next })) setSettings(next); }} />}
       <fieldset disabled={busy} className="min-w-0">
       {superAdmin && <section className="mt-6 border-t border-border pt-5">
@@ -264,6 +266,26 @@ function ItemForm({ item, cats, onSave, onCancel }: { item: MenuItem; cats: Cate
         <Button className={btn}>Save</Button>
       </div>
     </form>
+  );
+}
+
+function SeedButton() {
+  const [busy, setBusy] = useState(false);
+  return (
+    <section className="mt-6 border-t border-border pt-5">
+      <h2 className="text-xl font-bold">Sample Data</h2>
+      <p className="mt-1 text-sm text-muted-foreground">Creates the Burger2Rolls restaurant (access + menu documents) if it doesn't exist yet. Existing data is never overwritten.</p>
+      <Button className={`${btn} mt-3`} disabled={busy} onClick={async () => {
+        setBusy(true);
+        try {
+          const { created, skipped } = await ensureBurger2Rolls();
+          if (created.length) toast.success(`Created: ${created.join(", ")}`);
+          else toast.info("Burger2Rolls already exists — nothing changed.", { description: skipped.join(", ") });
+        } catch (e) {
+          toast.error("Seed failed", { description: e instanceof Error ? e.message : "Check Firestore rules and your sign-in." });
+        } finally { setBusy(false); }
+      }}>{busy ? "Seeding…" : "Seed Burger2Rolls"}</Button>
+    </section>
   );
 }
 
