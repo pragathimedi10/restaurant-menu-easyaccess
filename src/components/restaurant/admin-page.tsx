@@ -269,6 +269,26 @@ function ItemForm({ item, cats, onSave, onCancel }: { item: MenuItem; cats: Cate
   );
 }
 
+function SeedButton() {
+  const [busy, setBusy] = useState(false);
+  return (
+    <section className="mt-6 border-t border-border pt-5">
+      <h2 className="text-xl font-bold">Sample Data</h2>
+      <p className="mt-1 text-sm text-muted-foreground">Creates the Burger2Rolls restaurant (access + menu documents) if it doesn't exist yet. Existing data is never overwritten.</p>
+      <Button className={`${btn} mt-3`} disabled={busy} onClick={async () => {
+        setBusy(true);
+        try {
+          const { created, skipped } = await ensureBurger2Rolls();
+          if (created.length) toast.success(`Created: ${created.join(", ")}`);
+          else toast.info("Burger2Rolls already exists — nothing changed.", { description: skipped.join(", ") });
+        } catch (e) {
+          toast.error("Seed failed", { description: e instanceof Error ? e.message : "Check Firestore rules and your sign-in." });
+        } finally { setBusy(false); }
+      }}>{busy ? "Seeding…" : "Seed Burger2Rolls"}</Button>
+    </section>
+  );
+}
+
 function validImageUrl(value: string) {
   if (!value.trim()) return true;
   try { return new URL(value.trim()).protocol === "https:"; } catch { return false; }
