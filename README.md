@@ -87,10 +87,10 @@ The restaurant ID in the URL determines which restaurant's data is loaded.
 ## 📸 Screenshots
 
 Restaurant Menu
-Screenshot 2026-10-20 151611.png
+[Screenshot 2026-10-20 151611.png]
 
 Super Admin Dashboard
-Screenshot 2026-10-20 151451.png
+[Screenshot 2026-10-20 151451.png]
 
 ## 🚀 Future Improvements
 
