@@ -1,26 +1,112 @@
-# Pixel Perfect
+# 🍽️ Multi-Tenant SaaS Restaurant Platform
 
-Implement exactly the screenshot and nothing else
+A modern, multi-tenant B2B SaaS web application that enables restaurant owners to manage digital menus, categories, pricing, item availability, and restaurant settings in real time. Built with React, TypeScript, Tailwind CSS, and Firebase.
 
-This project was built with [Lovable](https://lovable.dev).
+## 🌐 Live Demo
 
-**Live app**: https://restaurant-menu-easyaccess.lovable.app
+**Live Website:**  https://restaurant-menu-easyaccess.lovable.app/burger2rolls
 
-## Build with Lovable
+## ✨ Key Features
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/103f3058-68b0-400e-b125-c26bdb1d6b13).
+* **Multi-Tenant Architecture:** Supports multiple restaurants through dynamic URL-based routing, with each restaurant accessing its own menu data.
+* **Role-Based Access Control (RBAC):** Separates Super Admin privileges from restaurant owner permissions.
+* **Dynamic Digital Menus:** Displays restaurant-specific menus, categories, pricing, and item availability.
+* **Real-Time Synchronization:** Reflects menu changes using Firebase Firestore subscriptions.
+* **Restaurant Admin Dashboard:** Enables restaurant owners to manage menu items and restaurant settings.
+* **CRUD Operations:** Supports creating, reading, updating, and managing menu data.
+* **Firestore Security Rules:** Enforces access permissions and tenant-specific data boundaries.
+* **Responsive UI:** Built with Tailwind CSS for a clean and adaptable user interface.
+* **Automated Data Seeding:** Supports initializing restaurant configurations and sample menu data.
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+## 🛠️ Tech Stack
 
-## Development
+| Category       | Technologies                     |
+| -------------- | -------------------------------- |
+| Frontend       | React 18, TypeScript             |
+| Styling        | Tailwind CSS                     |
+| Build Tool     | Vite                             |
+| Routing        | React Router v6                  |
+| Icons          | Lucide React                     |
+| Authentication | Firebase Authentication          |
+| Database       | Cloud Firestore                  |
+| Security       | Firebase Security Rules          |
+| Deployment     | Add your actual hosting platform |
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+## 🏗️ Architecture
 
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+The application uses a multi-tenant architecture to separate restaurant access information from restaurant menu data.
+
+```text
+Multi-Tenant SaaS Platform
+│
+├── Customer-Facing Menu
+│   └── /:restaurantId
+│
+├── Restaurant Admin Dashboard
+│   └── /:restaurantId/admin
+│
+└── Firebase
+    ├── Authentication
+    └── Cloud Firestore
+        ├── restaurant_access/{restaurantId}
+        └── restaurant_data/{restaurantId}
 ```
+
+### Database Structure
+
+| Collection          | Purpose                                                |
+| ------------------- | ------------------------------------------------------ |
+| `restaurant_access` | Stores restaurant ownership and access information     |
+| `restaurant_data`   | Stores restaurant settings, categories, and menu items |
+
+### Access Control
+
+* **Super Admin:** Manages platform-level operations and restaurant configurations.
+* **Restaurant Owner:** Manages menu items and permitted restaurant-specific settings.
+* **Public Users:** Access customer-facing restaurant menus.
+
+Firebase Security Rules enforce permissions for database operations.
+
+## 🔗 Dynamic Routes
+
+| Route                  | Description                            | Access           |
+| ---------------------- | -------------------------------------- | ---------------- |
+| `/:restaurantId`       | Displays the restaurant's digital menu | Public           |
+| `/:restaurantId/admin` | Restaurant management dashboard        | Authorized users |
+
+The restaurant ID in the URL determines which restaurant's data is loaded.
+
+## 🔒 Security
+
+* Firebase Authentication for user identity.
+* Firestore Security Rules for authorization.
+* Tenant-specific ownership checks.
+* Restricted database operations based on user roles.
+* Separate collections for restaurant access and restaurant data.
+
+## 📸 Screenshots
+
+Add screenshots of your application here to showcase the customer-facing menu and restaurant admin dashboard.
+
+```text
+![Restaurant Menu](<img width="1337" height="635" alt="Screenshot 2026-10-20 151451" src="https://github.com/user-attachments/assets/553029c0-1255-4836-99f4-3e1326a8062e" />
+)
+
+![Admin Dashboard](<img width="1304" height="551" alt="Screenshot 2026-10-20 151611" src="https://github.com/user-attachments/assets/cc22d569-5058-4c38-836a-c2b1ea8e1d81" />
+)
+```
+
+Replace these example paths with actual screenshots committed to your repository.
+
+## 🚀 Future Improvements
+
+* Restaurant analytics and menu performance insights.
+* Enhanced inventory and availability management.
+* Additional restaurant customization options.
+* Improved onboarding for new restaurant owners.
+
+## 👨‍💻 About the Project
+
+Developed as a full-stack SaaS project to explore multi-tenant architecture, role-based access control, real-time database synchronization, and secure cloud-based application development.
+
+
