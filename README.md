@@ -86,8 +86,11 @@ The restaurant ID in the URL determines which restaurant's data is loaded.
 
 ## 📸 Screenshots
 <p align="center">
+    Super Admin Dashboard
   <img src="./Screenshot 2026-10-20 151611.png" alt="Restaurant Menu" width="800" />
   <br>
+    <br>
+    Restaurant Menu
   <img src="./Screenshot 2026-10-20 151451.png" alt="Super Admin Dashboard" width="800" />
 </p>
 
