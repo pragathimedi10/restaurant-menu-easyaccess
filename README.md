@@ -86,17 +86,11 @@ The restaurant ID in the URL determines which restaurant's data is loaded.
 
 ## 📸 Screenshots
 
-Add screenshots of your application here to showcase the customer-facing menu and restaurant admin dashboard.
+Restaurant Menu
+Screenshot 2026-10-20 151611.png
 
-```text
-![Restaurant Menu](<img width="1337" height="635" alt="Screenshot 2026-10-20 151451" src="https://github.com/user-attachments/assets/553029c0-1255-4836-99f4-3e1326a8062e" />
-)
-
-![Admin Dashboard](<img width="1304" height="551" alt="Screenshot 2026-10-20 151611" src="https://github.com/user-attachments/assets/cc22d569-5058-4c38-836a-c2b1ea8e1d81" />
-)
-```
-
-Replace these example paths with actual screenshots committed to your repository.
+Super Admin Dashboard
+Screenshot 2026-10-20 151451.png
 
 ## 🚀 Future Improvements
 
